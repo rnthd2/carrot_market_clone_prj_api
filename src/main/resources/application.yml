@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/carrotmarket;
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+
+  jpa :
+    hibernate :
+      ddl-auto : create
+    properties :
+      hibernate :
+#        print out
+#        show_sql : true
+        format_sql : true
+        default_batch_fetch_size : 100  #in query의 개수를 몇 개로 할건가?!
+    open-in-view : false #기본값
+
+logging :
+  level :
+#    logger
+    org.hibernate.SQL : debug
+#    org.hibernate.type : trace
+
+
