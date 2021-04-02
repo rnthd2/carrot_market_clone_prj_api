@@ -8,6 +8,7 @@ import service.carrot.domain.converter.PostCategoryConverter;
 import service.carrot.domain.converter.PostStatusConverter;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * 1. 제목
@@ -38,6 +39,9 @@ public class Post {
 
     @NotNull
     private Long price;
+
+    @OneToMany(mappedBy = "post")
+    private List<PostPhotos> postPhotos;
 
     private PostStatus postStatus;
 
