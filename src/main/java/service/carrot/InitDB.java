@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 @RequiredArgsConstructor
 public class InitDB {
 
-    private final EntityManager em;
     private final InitService initService;
 
     @PostConstruct
@@ -37,15 +36,16 @@ public class InitDB {
         }
 
         private Post createPost(Long id, String title, String mainText, Long price, Area area, PostCategory postCategory, PostStatus postStatus) {
-            Post post = new Post();
-//            post.setPk_id(id); @Id로 자동으로 pk
-            post.setTitle(title);
-            post.setMainText(mainText);
-            post.setPrice(price);
-            post.setArea(area);
-            post.setPostCategory(postCategory);
-            post.setPostStatus(postStatus);
-            return post;
+            Post post1 = Post.ByRegistBuilder()
+                    .title("제목")
+                    .mainText("본문")
+                    .price(1000L)
+                    .area(Area.BUSAN)
+                    .postCategory(PostCategory.BOOK_AND_TICKET_AND_REOCORD)
+                    .postStatus(PostStatus.SALE)
+                    .postPhotos(null)
+                    .build();
+            return post1;
         }
 
     }

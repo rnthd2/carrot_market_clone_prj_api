@@ -9,26 +9,30 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import service.carrot.FileUploadProperties;
+import service.carrot.domain.dao.Post;
 import service.carrot.domain.dao.PostPhotos;
 import service.carrot.exceptions.FileDownloadException;
 import service.carrot.exceptions.FileUploadException;
+import service.carrot.repository.PostPhotosRepository;
+import service.carrot.repository.PostRepository;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
+import java.util.Optional;
 
 @Service
-@Transactional
-@RequiredArgsConstructor
-public class PostPhotosService {
+@Transactional(readOnly = true)
+public class PostPhotoService {
+
+    @Autowired
+    private PostPhotosRepository postPhotosRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
     private final Path fileLocation;
 
     /**
@@ -37,7 +41,7 @@ public class PostPhotosService {
      * @param prop
      */
     @Autowired
-    public PostPhotosService(FileUploadProperties prop) {
+    public PostPhotoService(FileUploadProperties prop) {
         this.fileLocation = Paths.get(prop.getUploadDir())
                 .toAbsolutePath().normalize();
         try {
@@ -49,6 +53,7 @@ public class PostPhotosService {
 
     /**
      * 파일 저장
+     * 동일한 파일이 존재하는 경우 덮어쓴다.
      *
      * @param file
      * @return
@@ -72,6 +77,22 @@ public class PostPhotosService {
     }
 
     /**
+     * 파일 DB 저장
+     *
+     * todo try catch
+     * @param fileName
+     * @param fileDownloadUri
+     * @param contentType
+     * @param size
+     * @return
+     */
+    public PostPhotos save(String fileName, String fileDownloadUri, String contentType, long size) {
+        Post post = postRepository.findById(1).get();
+        PostPhotos postPhotos = PostPhotos.createPostPhotos(post, fileName, fileDownloadUri,contentType, size);
+        return postPhotosRepository.save(postPhotos);
+    }
+
+    /**
      * 파일 다운로드
      *
      * @param fileName
@@ -91,7 +112,4 @@ public class PostPhotosService {
             throw new FileDownloadException(fileName + " 파일을 찾을 수 없습니다.", e);
         }
     }
-
-
-
 }

@@ -1,17 +1,15 @@
 package service.carrot.api;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import service.carrot.service.PostPhotosService;
 import org.springframework.core.io.Resource;
+import service.carrot.service.PostPhotoService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -24,7 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 public class PostPhotsController {
-    private final PostPhotosService postPhotosService;
+    private final PostPhotoService postPhotoService;
 
     /**
      * 파일 업로드
@@ -33,17 +31,24 @@ public class PostPhotsController {
      */
     @PostMapping("/upload/postPhotos")
     public FileUploadResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = postPhotosService.storeFile(file);
+        String fileName = postPhotoService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
+                .path("/download/postPhotos/")
                 .path(fileName)
                 .toUriString();
+
+        postPhotoService.save(fileName, fileDownloadUri, file.getContentType(), file.getSize());
 
         return new FileUploadResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
-    @PostMapping("/uploadMultipleFiles")
+    /**
+     * 멀티 파일 업로드
+     * @param files
+     * @return
+     */
+    @PostMapping("/upload/multiple/postPhotos")
     public List<FileUploadResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files){
         return Arrays.asList(files)
                 .stream()
@@ -51,10 +56,17 @@ public class PostPhotsController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/downloadFile/{fileName:.+}")
+    /**
+     * 파일 다운로드
+     *
+     * @param fileName
+     * @param request
+     * @return
+     */
+    @GetMapping("/download/postPhotos/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request){
         // Load file as Resource
-        Resource resource = postPhotosService.loadFileAsResource(fileName);
+        Resource resource = postPhotoService.loadFileAsResource(fileName);
 
         // Try to determine file's content type
         String contentType = null;
@@ -74,19 +86,20 @@ public class PostPhotsController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
-}
 
-@Data
-class FileUploadResponse{
-    private String name;
-    private String uri;
-    private String contentType;
-    private long size;
+    @Data
+    class FileUploadResponse{
+        private String name;
+        private String uri;
+        private String contentType;
+        private long size;
 
-    public FileUploadResponse(String name, String uri, String contentType, long size) {
-        this.name = name;
-        this.uri = uri;
-        this.contentType = contentType;
-        this.size = size;
+        public FileUploadResponse(String name, String uri, String contentType, long size) {
+            this.name = name;
+            this.uri = uri;
+            this.contentType = contentType;
+            this.size = size;
+        }
     }
+
 }
