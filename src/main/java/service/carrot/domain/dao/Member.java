@@ -3,6 +3,7 @@ package service.carrot.domain.dao;
 import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.annotation.Description;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,11 +27,11 @@ public class Member {
     @Id
     @GeneratedValue
     @Column(name = "member_pk_id")
-    private Long pk_id;
+    private Long id;
 
     @NotNull
     @Column(name = "member_id")
-    private Long id;
+    private Long member_id;
 
     @NotNull
     @Column(name = "member_pw")
