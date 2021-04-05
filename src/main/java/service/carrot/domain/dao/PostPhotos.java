@@ -2,6 +2,8 @@ package service.carrot.domain.dao;
 
 import lombok.Getter;
 import lombok.Setter;
+import service.carrot.repository.PostRepository;
+import service.carrot.service.PostPhotoService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,13 +19,15 @@ import java.time.LocalDateTime;
 @Setter
 public class PostPhotos {
     @Id
-    @GeneratedValue
+    @GeneratedValue //자동으로 생성해주는 키
     @Column(name = "postPhotos_pk_id")
-    private Long pk_id;
+    private Long id;
 
     private String original_file_name;
 
     private String stored_file_path;
+
+    private String file_content_type;
 
     private long file_size;
 
@@ -32,4 +36,15 @@ public class PostPhotos {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_pk_id")
     private Post post; //주문 회원
+
+    public static PostPhotos createPostPhotos(Post post, String fileName, String fileDownloadUri, String contentType, long size) {
+        PostPhotos postPhotos = new PostPhotos();
+        postPhotos.setStored_file_path(fileDownloadUri);
+        postPhotos.setOriginal_file_name(fileName);
+        postPhotos.setDateTime(LocalDateTime.now());
+        postPhotos.setFile_size(size);
+        postPhotos.setFile_content_type(contentType);
+        postPhotos.setPost(post);
+        return postPhotos;
+    }
 }
