@@ -1,11 +1,8 @@
 package service.carrot.domain.dao;
 
 import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import service.carrot.domain.converter.AreaConverter;
-import service.carrot.domain.converter.PostCategoryConverter;
-import service.carrot.domain.converter.PostStatusConverter;
+import lombok.*;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,11 +22,12 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
     @Id
     @GeneratedValue
     @Column(name = "post_pk_id")
-    private Long pk_id;
+    private Long id;
 
     @NotNull
     private String title;
@@ -48,5 +46,23 @@ public class Post {
     private PostCategory postCategory;
 
     private Area area;
+
+    @Builder(builderClassName = "ByRegistBuilder", builderMethodName = "ByRegistBuilder")
+    public Post(Long id, String title, String mainText, Long price, Area area, PostCategory postCategory, PostStatus postStatus, List<PostPhotos> postPhotos) {
+        Assert.notNull(title, "title must not be null");
+        Assert.notNull(mainText, "mainText must not be null");
+        Assert.notNull(price, "price must not be null");
+        Assert.notNull(area, "area must not be null");
+        Assert.notNull(postCategory, "postCategory must not be null");
+
+        this.id = id;
+        this.title = title;
+        this.mainText = mainText;
+        this.price = price;
+        this.area = area;
+        this.postPhotos = postPhotos;
+        this.postCategory = postCategory;
+        this.postStatus = postStatus;
+    }
 
 }
