@@ -16,8 +16,8 @@ import java.util.List;
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/api/v1/get/memberList")
-    public List<Member> memberListV1(){
+    @GetMapping("/memberList")
+    public List<Member> getMemberListV1(){
         return memberService.findMemberList();
     }
 
@@ -26,7 +26,7 @@ public class MemberController {
      * @param member
      * @return
      */
-    @PostMapping("/api/v1/join/member")
+    @PostMapping("/member")
     public MemberResponse joinMemberV1(@RequestBody @Validated Member member) {
         Long id = memberService.join(member);
         return new MemberResponse(id);
@@ -34,7 +34,7 @@ public class MemberController {
 
     /**
      * 로그인
-     * @param member
+     * @param
      * @return
      */
     /*@PostMapping("/api/v1/login/member")
@@ -43,14 +43,14 @@ public class MemberController {
         return new MemberResponse(id);
     }*/
 
+    class MemberResponse {
+        private Long id;
 
-
-}
-
-class MemberResponse {
-    private Long id;
-
-    public MemberResponse(Long id) {
-        this.id = id;
+        public MemberResponse(Long id) {
+            this.id = id;
+        }
     }
+
 }
+
+
