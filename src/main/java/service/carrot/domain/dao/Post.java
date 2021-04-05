@@ -38,6 +38,7 @@ public class Post {
     @NotNull
     private Long price;
 
+    //todo fetch join
     @OneToMany(mappedBy = "post")
     private List<PostPhotos> postPhotos;
 
