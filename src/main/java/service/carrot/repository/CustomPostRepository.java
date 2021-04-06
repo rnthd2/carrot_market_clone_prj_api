@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CustomPostRepository {
     List<Post> findAllByAreaCode(String code);
+    Long save(Post post);
 }

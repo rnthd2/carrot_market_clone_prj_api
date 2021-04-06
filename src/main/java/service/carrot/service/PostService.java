@@ -1,17 +1,13 @@
 package service.carrot.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import service.carrot.api.PostController;
 import service.carrot.domain.dao.*;
-import service.carrot.repository.MemberRepository;
 import service.carrot.repository.PostRepository;
+import service.carrot.repository.CustomPostRepositoryImpl;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,22 +17,20 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final CustomPostRepositoryImpl customPostRepository;
 
     @Transactional(readOnly = true)
     public Post findById(Long id) {
         return postRepository.findById(id);
     }
 
-    //todo area.code별 조회 필요
-    //todo qQuery 추가 필요
     @Transactional(readOnly = true)
     public List<Post> findPostList(String code) {
-        return postRepository.findAll(Sort.by(Sort.Direction.ASC,"id"));
+        return customPostRepository.findAllByAreaCode(code);
     }
 
     public Long registPost(Post post) {
-        em.persist(post);
-        return post.getId();
+        return customPostRepository.save(post);
     }
 
     public List<Long> updatePostList(List<Post> postList) {
