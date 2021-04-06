@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import service.carrot.domain.dao.*;
 import service.carrot.repository.PostRepository;
 import service.carrot.repository.CustomPostRepositoryImpl;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
