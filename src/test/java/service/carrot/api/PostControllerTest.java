@@ -1,7 +1,6 @@
 package service.carrot.api;
 
-import org.aspectj.lang.annotation.Before;
-import org.junit.jupiter.api.BeforeAll;
+import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,13 @@ import service.carrot.domain.dao.PostCategory;
 import service.carrot.domain.dao.PostStatus;
 import service.carrot.service.PostService;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import java.awt.print.Book;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -34,7 +34,12 @@ class PostControllerTest {
 
     @Test
     void getPostListV1() {
-
+        List<Post> postListV1 = postController.getPostListV1(Area.BUSAN.getCode());
+        List<Area> areas = postListV1.stream()
+                .map(post -> post.getArea())
+                .filter(area -> !area.equals(Area.BUSAN))
+                .collect(Collectors.toList());
+        assertThat(areas.isEmpty());
     }
 
     @Test

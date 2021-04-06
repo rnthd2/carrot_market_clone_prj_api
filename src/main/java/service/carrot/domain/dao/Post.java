@@ -37,8 +37,8 @@ public class Post {
 
     @NotNull
     private Long price;
-
-    @OneToMany(mappedBy = "post")
+    
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<PostPhotos> postPhotos;
 
     private PostStatus postStatus;
